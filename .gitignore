@@ -1,0 +1,13 @@
+# Exclude photo directories
+/ARW/
+/JPG/
+/backup/
+
+# Exclude python execution caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Exclude workflow-related progress files
+.git/sdd/
