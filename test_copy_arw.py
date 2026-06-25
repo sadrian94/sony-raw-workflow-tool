@@ -27,6 +27,10 @@ class TestCopyArw(unittest.TestCase):
         mock_isdir.side_effect = lambda path: not path.endswith('backup')
         self.assertEqual(validate_dirs("dummy_path"), ["backup"])
 
+    def test_validate_dirs_missing(self):
+        # Under normal conditions where test environment folders don't exist
+        missing = validate_dirs("./nonexistent_test_dir")
+        self.assertEqual(len(missing), 3)
 
 if __name__ == "__main__":
     unittest.main()
