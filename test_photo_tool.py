@@ -43,5 +43,33 @@ class TestSonyWorkflowManager(unittest.TestCase):
         # Verify JPG copied
         self.assertTrue(os.path.exists(os.path.join(self.test_dir, "JPG", "DSC00001.JPG")))
 
+    def test_sync_raws(self):
+        # Setup directories manually
+        os.makedirs(os.path.join(self.test_dir, "backup"))
+        os.makedirs(os.path.join(self.test_dir, "JPG"))
+        os.makedirs(os.path.join(self.test_dir, "ARW"))
+        
+        # Create files in backup
+        open(os.path.join(self.test_dir, "backup", "DSC00001.JPG"), "w").close()
+        open(os.path.join(self.test_dir, "backup", "DSC00001.ARW"), "w").close()
+        open(os.path.join(self.test_dir, "backup", "DSC00002.JPG"), "w").close()
+        open(os.path.join(self.test_dir, "backup", "DSC00002.ARW"), "w").close()
+        
+        # User culled DSC00002.JPG (only DSC00001.JPG is left in JPG/)
+        open(os.path.join(self.test_dir, "JPG", "DSC00001.JPG"), "w").close()
+        
+        manager = SonyWorkflowManager(self.test_dir)
+        success, copied, skipped, missing = manager.sync_raws()
+        
+        self.assertTrue(success)
+        self.assertEqual(copied, 1)
+        self.assertEqual(skipped, 0)
+        self.assertEqual(missing, 0)
+        
+        # Verify matched ARW is copied
+        self.assertTrue(os.path.exists(os.path.join(self.test_dir, "ARW", "DSC00001.ARW")))
+        # Verify culled ARW is NOT copied
+        self.assertFalse(os.path.exists(os.path.join(self.test_dir, "ARW", "DSC00002.ARW")))
+
 if __name__ == "__main__":
     unittest.main()

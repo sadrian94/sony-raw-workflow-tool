@@ -40,3 +40,45 @@ class SonyWorkflowManager:
                 copied_count += 1
                 
         return True, moved_count, copied_count
+
+    def find_matching_arw(self, jpg_filename, backup_files):
+        base_jpg, ext = os.path.splitext(jpg_filename)
+        if ext.lower() not in ['.jpg', '.jpeg']:
+            return None
+        
+        target_base = base_jpg.lower()
+        for filename in backup_files:
+            backup_base, backup_ext = os.path.splitext(filename)
+            if backup_base.lower() == target_base and backup_ext.lower() == '.arw':
+                return filename
+        return None
+
+    def sync_raws(self):
+        if not (os.path.isdir(self.backup_dir) and os.path.isdir(self.jpg_dir) and os.path.isdir(self.arw_dir)):
+            return False, 0, 0, 0
+            
+        jpg_files = os.listdir(self.jpg_dir)
+        backup_files = os.listdir(self.backup_dir)
+        
+        copied = 0
+        skipped = 0
+        missing = 0
+        
+        for file in jpg_files:
+            if not (file.lower().endswith('.jpg') or file.lower().endswith('.jpeg')):
+                continue
+                
+            matching_arw = self.find_matching_arw(file, backup_files)
+            if matching_arw:
+                src_path = os.path.join(self.backup_dir, matching_arw)
+                dst_path = os.path.join(self.arw_dir, matching_arw)
+                
+                if os.path.exists(dst_path):
+                    skipped += 1
+                else:
+                    shutil.copy2(src_path, dst_path)
+                    copied += 1
+            else:
+                missing += 1
+                
+        return True, copied, skipped, missing
