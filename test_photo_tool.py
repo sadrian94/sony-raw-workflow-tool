@@ -71,5 +71,26 @@ class TestSonyWorkflowManager(unittest.TestCase):
         # Verify culled ARW is NOT copied
         self.assertFalse(os.path.exists(os.path.join(self.test_dir, "ARW", "DSC00002.ARW")))
 
+    def test_cli_integration(self):
+        import subprocess
+        # Create dummy JPG and ARW
+        open(os.path.join(self.test_dir, "DSC00001.JPG"), "w").close()
+        open(os.path.join(self.test_dir, "DSC00001.ARW"), "w").close()
+        
+        # Test init command
+        subprocess.run([
+            sys.executable, "photo_tool.py", "init", "--path", self.test_dir
+        ], check=True)
+        
+        self.assertTrue(os.path.exists(os.path.join(self.test_dir, "backup", "DSC00001.ARW")))
+        self.assertTrue(os.path.exists(os.path.join(self.test_dir, "JPG", "DSC00001.JPG")))
+        
+        # Test sync command
+        subprocess.run([
+            sys.executable, "photo_tool.py", "sync", "--path", self.test_dir
+        ], check=True)
+        
+        self.assertTrue(os.path.exists(os.path.join(self.test_dir, "ARW", "DSC00001.ARW")))
+
 if __name__ == "__main__":
     unittest.main()
