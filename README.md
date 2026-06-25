@@ -33,9 +33,23 @@ This tool is designed to support a safe, non-destructive, three-step photography
 
 ---
 
-## 🚀 How to Use
+## ⚙️ Installation
 
-Copy `photo_tool.py` and `photo_tool_core.py` into your album folder or install them in a centralized location on your system.
+### Prerequisites
+* **Python 3**: The tool is written in Python and does not require any external library dependencies (no `pip install` needed).
+
+### Getting the Tool
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/sadrian94/sony-raw-workflow-tool.git
+   cd sony-raw-workflow-tool
+   ```
+2. **Setup**:
+   You can either copy `photo_tool.py` and `photo_tool_core.py` directly into the directory of the photo album you want to process, or keep them in a single folder and specify your album path using the `--path` argument.
+
+---
+
+## 🚀 How to Use
 
 ### 1. Initialize Folder Structure
 Open your terminal in the album folder and run:
